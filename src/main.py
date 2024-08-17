@@ -1,38 +1,43 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 import requests
+from pathlib import Path
+from src.RAG import RAG, DocumentRetriever
+from src.models.models import RAGRequest, RAGResponse
 
+def get_relevant_context(query):
+    print("Preprocessing Documents...\n")
+    doc_path = Path("data/Academic-CV-V1 .pdf")
+    document_retriever = DocumentRetriever(doc_path)
+    documents = document_retriever.load_documents()
 
-def get_relevant_context(context, query):
-    pass
+    return documents
 
+def generate_response(context, query, rebuild_index=True, save_index=True):
+    rag = RAG()
+    response = rag(
+        query,
+        documents=context,
+        rebuild_index=rebuild_index,
+        save_index=save_index
+    )
 
-def generate_response(prompt):
-    pass
+    return response
 
 app = FastAPI()
 
-class RAGRequest(BaseModel):
-    context: str
-    query: str
+@app.get("/")
+async def main_root(request):
+    return {"message": "Welcome to the RAG API"}
 
-class RAGResponse(BaseModel):
-    answer: str
-
-# Replace this with the actual free API endpoint
-FREE_LLM_API_URL = "https://api.free-llm-service.com/generate"
-
-@app.post("/rag", response_model=RAGResponse)
+@app.post("/", response_model=RAGResponse)
 async def rag_endpoint(request: RAGRequest):
     query = request.query
-    context = get_relevant_context(request.context, query)
 
     try:
-        prompt = f"Based on the following information: {context}\n\Answer the following question: : {query}\n\:"
-        response = generate_response(prompt) # Make a request to the free LLM API
-        answer = response.json()["generated_text"] # Extract the generated answer from the API response
+        context = get_relevant_context(query)
+        response = generate_response(context, query, rebuild_index=True, save_index=True)
 
-        return RAGResponse(answer=answer)
+        return RAGResponse(answer=response)
     except requests.RequestException as e:
         raise HTTPException(status_code=500, detail=f"Error calling LLM API: {str(e)}")
     except KeyError:
@@ -40,4 +45,4 @@ async def rag_endpoint(request: RAGRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="localhost", port=8090)

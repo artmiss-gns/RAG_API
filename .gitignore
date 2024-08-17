@@ -2,3 +2,5 @@ test.ipynb
 .env
 .DS_Store
 .index
+
+*__pycache__/
