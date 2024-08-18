@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, UploadFile, Form
 import requests
 from pathlib import Path
 from src.RAG import RAG, DocumentRetriever
@@ -6,7 +6,7 @@ from src.models.models import RAGRequest, RAGResponse
 
 def get_relevant_context(query):
     print("Preprocessing Documents...\n")
-    doc_path = Path("data/Academic-CV-V1 .pdf")
+    doc_path = Path("data/Academic-CV-V1.pdf")
     document_retriever = DocumentRetriever(doc_path)
     documents = document_retriever.load_documents()
 
@@ -21,7 +21,7 @@ def generate_response(context, query, rebuild_index=True, save_index=True):
         save_index=save_index
     )
 
-    return response
+    return response.response
 
 app = FastAPI()
 
@@ -30,9 +30,11 @@ async def main_root(request):
     return {"message": "Welcome to the RAG API"}
 
 @app.post("/", response_model=RAGResponse)
-async def rag_endpoint(request: RAGRequest):
-    query = request.query
-
+async def rag_endpoint(
+    context: UploadFile = File(...),
+    query: str = Form(...)
+):
+    print(context)
     try:
         context = get_relevant_context(query)
         response = generate_response(context, query, rebuild_index=True, save_index=True)

@@ -122,7 +122,7 @@ class RAG:
 if __name__ == "__main__":
     # Load document
     print("Preprocessing Documents...\n")
-    doc_path = Path("data/Academic-CV-V1 .pdf")
+    doc_path = Path("data/Academic-CV-V1.pdf")
     document_retriever = DocumentRetriever(doc_path)
     documents = document_retriever.load_documents()
 
