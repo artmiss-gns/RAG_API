@@ -26,7 +26,7 @@ def generate_response(context, query, rebuild_index=True, save_index=True):
 app = FastAPI()
 
 @app.get("/")
-async def main_root(request):
+async def main_root():
     return {"message": "Welcome to the RAG API"}
 
 @app.post("/", response_model=RAGResponse)

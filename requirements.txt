@@ -1,6 +1,11 @@
 fastapi==0.112.1
+nltk==3.8.1
 llama_index==0.10.65
 llama_parse==0.4.9
+llama-index-llms-cohere
+llama_index.embeddings.cohere
+llama-index-llms-groq
+python-multipart
 nest_asyncio==1.6.0
 pydantic==2.8.2
 python-dotenv==1.0.1
