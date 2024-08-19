@@ -37,6 +37,7 @@ async def rag_endpoint(
     query: str = Form(...),
     rebuild_index: bool = Form(True),
     save_index: bool = Form(False),
+    # FIXME -> Add `k` here too as a parameter, currently, only the default value of k=5 is passed
 ):
     context_file_path = Path(f"data/{context.filename}")
     if not os.path.exists("data"): # check if data folder is note created 
