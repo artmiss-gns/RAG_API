@@ -3,7 +3,7 @@ import requests
 from pathlib import Path
 from src.RAG import RAG, DocumentRetriever
 from src.models.models import RAGRequest, RAGResponse
-
+import os
 
 def get_relevant_context(query, context_file_path):
     print("Preprocessing Documents...\n")
@@ -39,6 +39,8 @@ async def rag_endpoint(
     save_index: bool = Form(False),
 ):
     context_file_path = Path(f"data/{context.filename}")
+    if not os.path.exists("data"): # check if data folder is note created 
+        os.makedirs("data")
     try:
         with open(context_file_path, "wb") as file:
             file.write(context.file.read())
