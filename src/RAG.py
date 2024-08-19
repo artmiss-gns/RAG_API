@@ -54,18 +54,18 @@ class RAG:
         self.setup_embedding()
         self.setup_llm()
 
-    def __call__(self, query, documents, rebuild_index=False, save_index=False):
+    def __call__(self, query, documents, rebuild_index=False, save_index=False, k=5):
         self.documents = documents
         # loading the index
-        if rebuild_index is False: 
+        if rebuild_index is False:
             print("\nLoading Index...\n")
             self.load_index()
         # rebuilding the index
-        else : 
+        else :
             print("\nBuilding Index...\n")
             self.create_index(save_index)
 
-        query_engine = self.create_query_engine(k=5) #! if the founded documents is less than 5 ??
+        query_engine = self.create_query_engine(k=k) #! if the founded documents is less than 5 ??
         response = query_engine.query(query)
 
         return response
@@ -107,7 +107,7 @@ class RAG:
             model="llama3-groq-70b-8192-tool-use-preview",
             api_key=GROQ_API_KEY
         )
-        Settings.llm = self.llm 
+        Settings.llm = self.llm
 
     def setup_embedding(self):
         self.embed_model = CohereEmbedding(
@@ -134,6 +134,7 @@ if __name__ == "__main__":
         documents,
         # rebuild_index=True,
         # save_index=True
+        # k=5
     )
 
     print(response)
