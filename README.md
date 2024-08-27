@@ -1,5 +1,17 @@
 # RAG API with Dynamic Document Processing
 
+## 🚨 Important Notice 🚨
+
+🔔 **New Feature Added!** This project now includes a fully functional **User Interface (UI)** that complements the API. The UI allows you to interact with the API directly without needing to write any code.
+
+### 🚀 **Explore the UI Now: [UI Link](https://rag-ui.streamlit.app/)** 🚀
+
+🔗 **Quick Access**: [Installation](#installation) | [Usage](#usage) | [API Endpoints](#api-endpoints)
+
+Please make sure to review the updated documentation to take full advantage of the UI.
+
+
+
 ## Project Description
 
 This project implements a Retrieval-Augmented Generation (RAG) API using LlamaIndex and FastAPI. It's designed for efficient text-based question answering, integrating LlamaIndex for indexing and LlamaParse for flexible text preprocessing. The service is containerized using Docker for scalability, and a web UI is being developed with Streamlit for seamless user interaction.
