@@ -85,26 +85,21 @@ class RAG:
 
         return query_engine
 
-    def load_index(self):
-        """
-        # ! Note :
-        Currently the loading is only based on the file name. Later it should be changed to something else.
-        """
-        file_name = self.documents[0].metadata["file_name"]
-        if file_name is None:
-            raise ValueError("Index not found.")
-        storage_context = StorageContext.from_defaults(persist_dir=f"data/.index/{file_name}") # rebuild storage context
-        self.index = load_index_from_storage(storage_context)
-
     def create_index(self, save_index=False):
         index = VectorStoreIndex.from_documents(self.documents, model=self.embed_model)
         if save_index:
-            index.storage_context.persist(persist_dir=f"data/.index/{self.documents[0].metadata["file_name"]}") # data/stored/file_name
+            self.save_index(index)
         self.index = index
 
+    def save_index(self, index, index_name):
+        pass
+
+    def load_index(self, index_name=None):
+        pass
+    
     def setup_llm(self):
         self.llm = Groq(
-            model="llama3-groq-70b-8192-tool-use-preview",
+            model="llama-3.1-8b-instant",
             api_key=GROQ_API_KEY
         )
         Settings.llm = self.llm
