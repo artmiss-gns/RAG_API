@@ -54,16 +54,14 @@ class RAG:
         self.setup_embedding()
         self.setup_llm()
 
-    def __call__(self, query, documents, rebuild_index=False, save_index=False, k=5):
+    def __call__(self, query, documents, load_index=False, save_index=False, index_name=None, k=5): # TODO: add constraint for index_name when load_index and save_index are both False
         self.documents = documents
-        # loading the index
-        if rebuild_index is False:
+        if load_index:
             print("\nLoading Index...\n")
-            self.load_index()
-        # rebuilding the index
+            self.load_index(index_name=index_name)
         else :
             print("\nBuilding Index...\n")
-            self.create_index(save_index)
+            self.create_index(save_index=save_index, index_name=index_name)
 
         query_engine = self.create_query_engine(k=k) #! if the founded documents is less than 5 ??
         response = query_engine.query(query)
@@ -85,17 +83,18 @@ class RAG:
 
         return query_engine
 
-    def create_index(self, save_index=False):
+    def create_index(self, save_index=False, index_name=None):
         index = VectorStoreIndex.from_documents(self.documents, model=self.embed_model)
         if save_index:
-            self.save_index(index)
+            self.save_index(index, index_name)
         self.index = index
 
     def save_index(self, index, index_name):
-        pass
+        index.storage_context.persist(persist_dir=f"data/saved_index/{index_name}")
 
-    def load_index(self, index_name=None):
-        pass
+    def load_index(self, index_name):
+        storage_context = StorageContext.from_defaults(persist_dir=f"data/saved_index/{index_name}") # rebuild storage context
+        self.index = load_index_from_storage(storage_context) # load index
     
     def setup_llm(self):
         self.llm = Groq(
@@ -127,8 +126,8 @@ if __name__ == "__main__":
     response = rag(
         query,
         documents,
-        # rebuild_index=True,
-        # save_index=True
+        # load_index=False,
+        # save_index=False,
         # k=5
     )
 
