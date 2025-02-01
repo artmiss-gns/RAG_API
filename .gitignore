@@ -2,5 +2,7 @@ test.ipynb
 .env
 .DS_Store
 .index
+todo.md
+data/saved_index/*
 
 *__pycache__/
