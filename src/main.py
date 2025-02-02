@@ -1,24 +1,26 @@
 from fastapi import FastAPI, HTTPException, File, UploadFile, Form, Depends
 import requests
+from typing import Optional
 from pathlib import Path
 from src.RAG import RAG, DocumentRetriever
 from src.models.models import RAGRequest, RAGResponse
 import os
 
-def get_relevant_context(context_file_path):
-    print("Preprocessing Documents...\n")
-    print(context_file_path)
-    document_retriever = DocumentRetriever(context_file_path)
-    documents = document_retriever.load_documents()
 
-    return documents
-
-
-def generate_response(documents, query, load_index=False, save_index=False, index_name=None, k=5):
+def generate_response(query, context=None , load_index=False, save_index=False, index_name=None, k=5):
+    if context:
+        context_file_path = Path(f"data/context_file_{context.filename}")
+        # saving the context file
+        with open(context_file_path, "wb") as file:
+            file.write(context.file.read())
+    else:
+        context_file_path = None
+    
+    print("RAG is being called...") 
     rag = RAG()
     response = rag(
         query,
-        documents=documents,
+        documents_path=context_file_path,
         load_index=load_index,
         save_index=save_index,
         index_name=index_name,
@@ -50,6 +52,13 @@ def validate_inputs(
             status_code=400,
             detail="save_index and load_index cannot both be True"
         )
+        
+    # checking if the index name already exists
+    if os.path.exists(f"data/saved_index/{index_name}"):
+        raise HTTPException(
+            status_code=400,
+            detail="Index name already exists, please choose a different name"
+        )
     return index_name
 
 
@@ -62,31 +71,32 @@ async def main_root():
 
 @app.post("/", response_model=RAGResponse)
 async def rag_endpoint(
-    context: UploadFile = File(...),
+    context: Optional[UploadFile] = File(None),
     query: str = Form(...),
-    # rebuild_index: bool = Form(True),
     load_index: bool = Form(False),
     save_index: bool = Form(False),
     index_name: str = Depends(validate_inputs),
     k: int = Form(5),
 ):
-    context_file_path = Path(f"data/{context.filename}")
-    if not os.path.exists("data"): # check if data folder is note created 
-        os.makedirs("data")
-    try:
-        with open(context_file_path, "wb") as file:
-            file.write(context.file.read())
+    if load_index and context:
+        raise HTTPException(status_code=400, detail="File upload is not allowed when load_index is True.")
+    elif not load_index and context is None:
+        raise HTTPException(status_code=400, detail="File upload is required when load_index is False.")
 
-        document = get_relevant_context(context_file_path)
-        response = generate_response(document, query, load_index=load_index, save_index=save_index, index_name=index_name, k=k)
+    try:
+        response = generate_response(query, context, load_index=load_index, save_index=save_index, index_name=index_name, k=k)
         return RAGResponse(answer=response)
-    
     except requests.RequestException as e:
         raise HTTPException(status_code=500, detail=f"Error calling LLM API: {str(e)}")
     except KeyError:
         raise HTTPException(status_code=500, detail="Unexpected response format from LLM API")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Index not found")
     finally:
-        context_file_path.unlink()
+        # removing the context file
+        if context:
+            os.remove(f"data/context_file_{context.filename}")
+
 
 if __name__ == "__main__":
     import uvicorn

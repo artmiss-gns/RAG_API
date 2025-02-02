@@ -24,6 +24,7 @@ from llama_index.embeddings.cohere import CohereEmbedding
 from llama_index.llms.groq import Groq
 from llama_parse import LlamaParse
 
+
 # Load environment variables
 load_dotenv()
 nest_asyncio.apply()
@@ -54,20 +55,29 @@ class RAG:
         self.setup_embedding()
         self.setup_llm()
 
-    def __call__(self, query, documents, load_index=False, save_index=False, index_name=None, k=5): # TODO: add constraint for index_name when load_index and save_index are both False
-        self.documents = documents
+    def __call__(self, query, documents_path=None, load_index=False, save_index=False, index_name=None, k=5): # TODO: add constraint for index_name when load_index and save_index are both False
+        if documents_path is None and not load_index:
+            raise ValueError("Documents are required when load_index is False")
+        
         if load_index:
             print("\nLoading Index...\n")
             self.load_index(index_name=index_name)
-        else :
+        else : 
             print("\nBuilding Index...\n")
-            self.create_index(save_index=save_index, index_name=index_name)
+            documents = self.retrieve_documents(documents_path)
+            self.create_index(documents=documents, save_index=save_index, index_name=index_name)
 
         query_engine = self.create_query_engine(k=k) #! if the founded documents is less than 5 ??
         response = query_engine.query(query)
 
         return response
-
+    
+    def retrieve_documents(self, documents_path):
+        print("Preprocessing Documents...\n")
+        document_retriever = DocumentRetriever(documents_path)
+        documents = document_retriever.load_documents()
+        return documents
+    
     def create_query_engine(self, k=3):
         retriever = VectorIndexRetriever(
             index=self.index,
@@ -83,8 +93,8 @@ class RAG:
 
         return query_engine
 
-    def create_index(self, save_index=False, index_name=None):
-        index = VectorStoreIndex.from_documents(self.documents, model=self.embed_model)
+    def create_index(self, documents, save_index=False, index_name=None):
+        index = VectorStoreIndex.from_documents(documents, model=self.embed_model)
         if save_index:
             self.save_index(index, index_name)
         self.index = index
@@ -93,8 +103,11 @@ class RAG:
         index.storage_context.persist(persist_dir=f"data/saved_index/{index_name}")
 
     def load_index(self, index_name):
-        storage_context = StorageContext.from_defaults(persist_dir=f"data/saved_index/{index_name}") # rebuild storage context
-        self.index = load_index_from_storage(storage_context) # load index
+        try:
+            storage_context = StorageContext.from_defaults(persist_dir=f"data/saved_index/{index_name}") # rebuild storage context
+            self.index = load_index_from_storage(storage_context) # load index
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Index {index_name} not found")
     
     def setup_llm(self):
         self.llm = Groq(
