@@ -54,7 +54,7 @@ def validate_inputs(
         )
         
     # checking if the index name already exists
-    if os.path.exists(f"data/saved_index/{index_name}"):
+    if save_index and os.path.exists(f"data/saved_index/{index_name}"):
         raise HTTPException(
             status_code=400,
             detail="Index name already exists, please choose a different name"

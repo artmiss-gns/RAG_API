@@ -21,14 +21,13 @@ while true; do
     if [ ! -d "$DIR_TO_CLEAN" ]; then
         log_message "ERROR: Directory $DIR_TO_CLEAN does not exist"
         # sleep for 24 hours
-        sleep 86400
         continue
     fi
 
     # Remove contents
     rm -rf "$DIR_TO_CLEAN"/*
-    log_message "Successfully cleared contents of $DIR_TO_CLEAN"
+    log_message "Successfully cleared contents of $DIR_TO_CLEAN at $(date '+%Y-%m-%d %H:%M:%S')"
     
-    # Wait for 60 seconds
-    sleep 60
+    # Wait for 24 hours
+    sleep 86400
 done
