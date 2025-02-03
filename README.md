@@ -85,7 +85,12 @@ http -f POST \
     http://localhost:8003\
     context@YOUR_FILE_TO_UPLOAD.pdf\
     query="YOUR QUERY"
+    load_index=false
+    save_index=false
+    index_name=
+    k=5
 ```
+
 
 ## API Endpoints
 
@@ -94,12 +99,24 @@ http -f POST \
 - Parameters:
     - `context`: File upload (document for context)
     - `query`: String (question to ask)
-    - `rebuild_index`: Boolean (optional)
+    - `load_index`: Boolean (optional)
     - `save_index`: Boolean (optional) 
+    - `index_name`: String (optional)
+    - `k`: Integer (optional)
 
 ## Deployment
 
 The API is deployed at: https://growing-bessy-hossein-golmohammadi-03788de4.koyeb.app/
+```bash
+http -f POST \
+    https://growing-bessy-hossein-golmohammadi-03788de4.koyeb.app/\
+    context@YOUR_FILE_TO_UPLOAD\
+    query="YOUR QUERY"\
+    load_index=false\
+    save_index=false\
+    k=5\
+    index_name=
+```
 
 ## License
 MIT License
