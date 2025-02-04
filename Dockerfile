@@ -11,6 +11,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire project
 COPY . .
 
+# Creating the data directory if not exists
+RUN mkdir -p data
+
 # Make scripts executable
 RUN chmod +x scripts/cleanup.sh
 RUN chmod +x scripts/entrypoint.sh
