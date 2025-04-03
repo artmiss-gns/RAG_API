@@ -91,7 +91,7 @@ async def rag_endpoint(
     except KeyError:
         raise HTTPException(status_code=500, detail="Unexpected response format from LLM API")
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Index not found")
+        raise HTTPException(status_code=404, detail=f"Index not found: {index_name}")
     finally:
         # removing the context file
         if context:

@@ -1,39 +1,49 @@
-# RAG API with Dynamic Document Processing
+# EduRAG: RAG-Powered Educational Assistant
 
-## 🚨 Important Notice 🚨
+## 🎓 Transform Your Learning Experience
 
-🔔 **New Feature Added!** This project now includes a fully functional **User Interface (UI)** that complements the API. The UI allows you to interact with the API directly without needing to write any code.
+EduRAG is an innovative educational platform that combines the power of Retrieval-Augmented Generation (RAG) with an intuitive user interface to create a personalized learning experience. Whether you're studying Mathematics, Science, History, or Computer Science, EduRAG helps you understand, practice, and master your subjects.
 
-### 🚀 **Explore the UI Now: [UI Link](https://rag-ui.streamlit.app/)** 🚀
+### 🚀 [Start Learning Now](https://rag-ui.streamlit.app/) 
 
-🔗 **Quick Access**: [Installation](#installation) | [Usage](#usage) | [API Endpoints](#api-endpoints)
+🔗 **Quick Links**: [Installation](#installation) | [Features](#features) | [Getting Started](#getting-started) | [EduRAG Website](https://rag-ui.streamlit.app/)
 
-Please make sure to review the updated documentation to take full advantage of the UI.
+## What Makes EduRAG Special?
 
+EduRAG transforms traditional studying by:
+- 📚 Processing your study materials intelligently
+- 🤔 Answering questions with context from your materials
+- ✍️ Creating custom quizzes to test your knowledge
+- 📝 Generating concise, focused summaries
+- 🎯 Adapting to different learning styles and subjects
 
+## System Architecture
 
-## Project Description
+EduRAG consists of two main components:
 
-This project implements a Retrieval-Augmented Generation (RAG) API using LlamaIndex and FastAPI. It's designed for efficient text-based question answering, integrating LlamaIndex for indexing and LlamaParse for flexible text preprocessing. The service is containerized using Docker for scalability, and a web UI is being developed with Streamlit for seamless user interaction.
+### 1. Educational AI Engine (API)
+- Built with FastAPI and LlamaIndex for robust document processing
+- Uses RAG technology to understand and process educational content
+- Powered by Groq for fast, accurate responses
+- Utilizes Cohere embeddings for precise content understanding
+- Handles multiple document formats (PDF, DOCX, TXT) via LlamaParse
 
-## Features
-
-- RAG API using FastAPI for efficient question answering
-- Document processing with LlamaParse
-- Indexing and retrieval using LlamaIndex
-- Containerized service with Docker
-- Web UI (in development) using Streamlit
+### 2. Interactive Learning Interface (UI)
+- Clean, intuitive Streamlit interface
+- Three specialized learning modes:
+  - 📖 Study Assistant: For detailed explanations and concept clarification
+  - 📝 Quiz Mode: For testing understanding and knowledge retention
+  - 📑 Summarize Content: For creating concise study materials
+- Subject-specific optimization
+- Real-time interaction with your study materials
 
 ## Technologies Used
 
-- Python
-- FastAPI
-- LlamaIndex
-- LlamaParse
-- Docker
-- Streamlit (for UI)
-- Groq (LLM)
-- Cohere (Embeddings)
+- **Core Engine**: Python, FastAPI, LlamaIndex
+- **Document Processing**: LlamaParse
+- **AI/ML**: Groq (LLM), Cohere (Embeddings)
+- **Interface**: Streamlit
+- **Deployment**: Docker
 
 ## Installation
 
